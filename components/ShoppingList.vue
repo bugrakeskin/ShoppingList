@@ -4,11 +4,11 @@
     class="border-b border-gray-100 dark:border-gray-800 my-4 flex p-2 items-center text-xl justify-between md:hover:bg-gray-800"
   >
     <!-- LEFT DIV -->
-    <div class="flex space-x-4 items-center">
+    <div class="flex space-x-2 items-center">
       <UCheckbox v-model="selected" />
       <div class="flex space-x-2 items-center">
         <UIcon
-          class="text-gray-500"
+          class="text-green-600 dark:text-green-300"
           dark:text-green-400
           :name="iconType"
         ></UIcon>
@@ -49,12 +49,21 @@ const iconType = computed(() => {
 const whenAdded = computed(() => {
   const today = new Date();
   const date = new Date(props.shopLists.created_at);
-  const diffTime = Math.abs(today.getTime() - date.getTime());
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  if (diffDays === 0) {
+
+  // Tarihler aynı gün mü kontrol et
+  if (
+    today.getFullYear() === date.getFullYear() &&
+    today.getMonth() === date.getMonth() &&
+    today.getDate() === date.getDate()
+  ) {
     return "Bugün";
   }
-  return diffDays + " gün önce";
+
+  // Gün farkını hesapla
+  const diffTime = Math.abs(today.getTime() - date.getTime());
+  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)); // floor kullanarak tam gün farkı hesapla
+
+  return diffDays + " gün önce";
 });
 </script>
 
