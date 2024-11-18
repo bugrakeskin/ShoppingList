@@ -1,6 +1,8 @@
 <template>
   <div class="p-4">
-    <h1 class="text-2xl mb-4">Ürün Ekleyin</h1>
+    <h1 class="text-2xl mb-4 text-green-600 dark:text-green-300">
+      Ürün Ekleyin
+    </h1>
 
     <UForm class="space-y-4" @submit.prevent="addShoppingItem" :state="{}">
       <UFormGroup label="Ürün Adı" name="product">
@@ -17,17 +19,12 @@
       <UButton type="submit"> Kaydet </UButton>
     </UForm>
     <!-- Success Message -->
-    <p v-if="successMessage" class="mt-4 text-green-600">
-      {{ successMessage }}
-    </p>
   </div>
 </template>
 
 <script setup lang="ts">
 import type { Products } from "~/types/types";
 const toast = useToast();
-// Shopping List Items
-const productlist = ref<Products[]>([]);
 
 // Form Data
 const formData = ref({
@@ -35,106 +32,77 @@ const formData = ref({
   type: "",
 });
 
-// Success Message
-const successMessage = ref("");
-const emit = defineEmits(["productAdded"]);
 // Supabase Client
 const supabase = useSupabaseClient<Products>();
 
-// Fetch Existing Shopping List Items
-const { data, error } = await useAsyncData("products", async () => {
-  const { data, error } = await supabase.from("products").select(); // Fetch all items
-  if (error) throw new Error(error.message);
-  return data;
-});
+// "Ürün Eklendi" olayını yakalamak için emit tanımlandı
+const emit = defineEmits(["productAdded"]);
 
-productlist.value = data.value ?? [];
-
-// Add Item to Shopping List
+// Ürün ekleme işlemi
 const addShoppingItem = async () => {
   try {
-    // Insert the form data into the Supabase table
+    // Boş alanları kontrol et
     if (!formData.value.name || !formData.value.type) {
       toast.add({
-        title: "Validation Error",
-        description: "Please fill in all fields.",
-        icon: "i-octicon-desktop-download-24",
+        title: "Eksik Alan",
+        description: "Lütfen tüm alanları doldurun.",
+        icon: "i-heroicons-exclamation-circle",
         timeout: 3000,
       });
-
       return;
     }
 
-    // Check if product already exists
+    // Ürünün zaten var olup olmadığını manuel kontrol et
     const { data: existingProduct, error: fetchError } = await supabase
       .from("products")
       .select("id")
       .eq("name", formData.value.name)
-      .maybeSingle(); // If no rows returned, it'll be null
+      .single();
 
-    if (fetchError) {
-      console.error("Error checking for existing product:", fetchError);
-      toast.add({
-        title: "Error",
-        description: "Error checking for existing product.",
-        timeout: 3000,
-      });
-      return;
+    if (fetchError && fetchError.code !== "PGRST116") {
+      // PGRST116 "kayıt bulunamadı" anlamına gelir, hata değil
+      throw fetchError;
     }
 
     if (existingProduct) {
       toast.add({
-        title: "Var olan ürün kaydı tespit edildi.",
-        description: `"${formData.value.name}" önceden listeye eklenmiştir.`,
+        title: "Ürün Zaten Mevcut",
+        description: `"${formData.value.name}" daha önce eklenmiş.`,
         timeout: 3000,
       });
       return;
     }
 
-    // Insert the new product into the database
-    const { data, error } = await supabase.from("products").insert([
+    // Ürün yoksa ekle
+    const { error } = await supabase.from("products").insert([
       {
         name: formData.value.name,
         type: formData.value.type,
       },
     ]);
 
-    if (error) throw error;
+    if (error) {
+      throw error; // Herhangi bir hata durumunda hata fırlat
+    }
 
-    // Clear form fields after successful insert
+    // Form alanlarını temizle
     formData.value.name = "";
     formData.value.type = "";
 
-    // Show success message
-    /*   successMessage.value = "Ürün Başarıyla Eklendi!"; */
+    // Başarılı mesajı
     toast.add({
-      title: "Kayıt başarılı!",
-      description: "Ürün Başarıyla Eklendi!",
+      title: "Ürün Eklendi",
+      description: "Ürün başarıyla listeye eklendi!",
       timeout: 3000,
     });
+
+    // Ürün eklendi olayını gönder
     emit("productAdded");
-    // Fetch the updated product list after the insert to reflect the new product
-    const { data: updatedProducts, error: fetchUpdatedError } = await supabase
-      .from("products")
-      .select(); // Get all products again
-
-    if (fetchUpdatedError) {
-      console.error("Error fetching updated product list:", fetchUpdatedError);
-      toast.add({
-        title: "Error",
-        description: "An error occurred while updating the product list.",
-        timeout: 3000,
-      });
-      return;
-    }
-
-    // Update local state with the new product list
-    productlist.value = updatedProducts ?? [];
   } catch (err: any) {
-    console.error("Error adding product:", err);
+    console.error("Ürün ekleme hatası:", err);
     toast.add({
-      title: "Error",
-      description: "An error occurred while adding the product.",
+      title: "Hata",
+      description: "Ürün eklenirken bir hata oluştu: " + err.message,
       timeout: 3000,
     });
   }

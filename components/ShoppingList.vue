@@ -1,5 +1,6 @@
 <template>
   <!-- Compenant DIV -->
+
   <div
     class="border-b border-gray-100 dark:border-gray-800 my-4 flex p-2 items-center text-xl justify-between md:hover:bg-gray-800"
   >

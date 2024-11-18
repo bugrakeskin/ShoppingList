@@ -1,28 +1,28 @@
 <template>
-  <div class="p-4">
+  <div class="">
     <UTabs :items="items" :default-index="0">
       <template #ShoppingList>
-        <ShoppingList
-          v-for="shopList in shopLists"
-          :key="shopList.id"
-          :shopLists="shopList"
-        />
-        <div>
+        <div class="pt-4">
+          <h1 class="text-2xl text-green-600 dark:text-green-300">
+            Alışveriş Listesi
+          </h1>
+
+          <ShoppingList
+            v-for="shopList in shopLists"
+            :key="shopList.id"
+            :shopLists="shopList"
+          />
+        </div>
+        <div class="mt-8">
           <UButton
             class="bg-green-400 text-gray-600"
             block
             label="Ekle"
             @click="isOpen = true"
           />
+
           <USlideover v-model="isOpen" prevent-close>
-            <UCard
-              class="flex flex-col flex-1"
-              :ui="{
-                body: { base: 'flex-1' },
-                ring: '',
-                divide: 'divide-y divide-gray-100 dark:divide-gray-800',
-              }"
-            >
+            <UCard class="flex flex-col flex-1">
               <template #header>
                 <div class="flex items-center justify-between">
                   <h3
@@ -52,8 +52,9 @@
           </USlideover>
         </div>
       </template>
+
+      <!-- Ürünler -->
       <template #ProductsInput>
-        <!-- ProductAdded olayını yakalıyoruz -->
         <ProductsInput @productAdded="refreshProducts" />
       </template>
     </UTabs>
@@ -61,56 +62,65 @@
 </template>
 
 <script setup lang="ts">
+import { defineAsyncComponent, ref, watch } from "vue";
+import type { ShoppingList, Products } from "~~/types/types"; // Add the correct types
+
+// Lazy-loaded components
+const ShoppingList = defineAsyncComponent(
+  () => import("~/components/ShoppingList.vue")
+);
+const ProductList = defineAsyncComponent(
+  () => import("~/components/ProductList.vue")
+);
+const ProductsInput = defineAsyncComponent(
+  () => import("~/components/ProductsInput.vue")
+);
+
+// Reactive states with types
 const isOpen = ref(false);
+const activeTab = ref("ShoppingList");
+const products = ref<Products[]>([]); // Explicitly typing products array
+const shopLists = ref<ShoppingList[]>([]); // Explicitly typing shopLists array
 
-import type { Products, ShoppingList } from "~/types/types";
-
-const products = ref<Products[]>([]);
-const shopLists = ref<ShoppingList[]>([]);
-
-const supabaseProduct = useSupabaseClient<Products>();
-const supabaseList = useSupabaseClient<ShoppingList>();
-
+// Supabase and toast instances
+const supabase = useSupabaseClient();
 const toast = useToast();
 
-// Fetch Products
-const fetchProducts = async () => {
+// Fetch data from Supabase
+const fetchData = async (table: string, targetRef: any) => {
   try {
-    const { data, error } = await supabaseProduct.from("products").select();
+    const { data, error } = await supabase.from(table).select();
     if (error) throw error;
-
-    products.value = data ?? [];
-  } catch (error) {
-    console.error("Error fetching products:", error);
-    toast.add({ title: "Failed to fetch products." });
+    targetRef.value = data ?? [];
+  } catch (err) {
+    console.error(`Error fetching ${table}:`, err);
+    toast.add({ title: `Failed to fetch ${table}` });
   }
 };
 
-// Refresh Products (Ürünleri yeniden getir)
+// Refresh functions
+const refreshProducts = async () => {
+  await fetchData("products", products);
+};
 
 const refreshShoppingList = async () => {
-  await fetchShoppingList();
-};
-const refreshProducts = async () => {
-  await fetchProducts();
+  await fetchData("shoppingList", shopLists);
 };
 
-// Fetch Shopping List
-const fetchShoppingList = async () => {
-  try {
-    const { data, error } = await supabaseList.from("shoppingList").select();
-    if (error) throw error;
-
-    shopLists.value = data ?? [];
-  } catch (error) {
-    console.error("Error fetching shopping list:", error);
-    toast.add({ title: "Failed to fetch shopping list." });
+// Watch active tab
+watch(activeTab, async () => {
+  if (activeTab.value === "ShoppingList") {
+    await refreshShoppingList();
+  } else if (activeTab.value === "ProductsInput") {
+    await refreshProducts();
   }
-};
+});
 
-await fetchProducts();
-await fetchShoppingList();
+// Initial data fetch
+await refreshProducts();
+await refreshShoppingList();
 
+// Tabs definition
 const items = [
   {
     label: "Alışveriş Listesi",
@@ -124,3 +134,7 @@ const items = [
   },
 ];
 </script>
+
+<style scoped>
+/* Add any custom styles here */
+</style>
