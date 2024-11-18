@@ -17,13 +17,6 @@
 
 <script lang="ts" setup>
 const selected = ref(false);
-/* const products = [
-  {
-    id: 1,
-    name: "Domates",
-    icon: "noto-v1:tomato",
-  },
-]; */
 
 import type { ShoppingList } from "~/types/types";
 

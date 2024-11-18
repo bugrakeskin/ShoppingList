@@ -37,9 +37,18 @@ const formData = ref({
 
 // Success Message
 const successMessage = ref("");
-
+const emit = defineEmits(["productAdded"]);
 // Supabase Client
 const supabase = useSupabaseClient<Products>();
+
+// Fetch Existing Shopping List Items
+const { data, error } = await useAsyncData("products", async () => {
+  const { data, error } = await supabase.from("products").select(); // Fetch all items
+  if (error) throw new Error(error.message);
+  return data;
+});
+
+productlist.value = data.value ?? [];
 
 // Add Item to Shopping List
 const addShoppingItem = async () => {
@@ -51,10 +60,38 @@ const addShoppingItem = async () => {
         description: "Please fill in all fields.",
         icon: "i-octicon-desktop-download-24",
         timeout: 3000,
-      }); // Use 'error' to style it as an error notification duration: 5000, // Optional: Set duration (ms) });
+      });
 
       return;
     }
+
+    // Check if product already exists
+    const { data: existingProduct, error: fetchError } = await supabase
+      .from("products")
+      .select("id")
+      .eq("name", formData.value.name)
+      .maybeSingle(); // If no rows returned, it'll be null
+
+    if (fetchError) {
+      console.error("Error checking for existing product:", fetchError);
+      toast.add({
+        title: "Error",
+        description: "Error checking for existing product.",
+        timeout: 3000,
+      });
+      return;
+    }
+
+    if (existingProduct) {
+      toast.add({
+        title: "Var olan ürün kaydı tespit edildi.",
+        description: `"${formData.value.name}" önceden listeye eklenmiştir.`,
+        timeout: 3000,
+      });
+      return;
+    }
+
+    // Insert the new product into the database
     const { data, error } = await supabase.from("products").insert([
       {
         name: formData.value.name,
@@ -64,33 +101,44 @@ const addShoppingItem = async () => {
 
     if (error) throw error;
 
-    // Reset the form
+    // Clear form fields after successful insert
     formData.value.name = "";
     formData.value.type = "";
 
-    // Add the new item to the local list
-    /*   if (data && Array.isArray(data)) {
-      shoppingList.value.push(...data); // Ensure data is iterable
-    } */
-
     // Show success message
-    successMessage.value = "Item added successfully!";
-  } catch (err: Error | any) {
+    /*   successMessage.value = "Ürün Başarıyla Eklendi!"; */
     toast.add({
-      title: "Validation Error",
+      title: "Kayıt başarılı!",
+      description: "Ürün Başarıyla Eklendi!",
+      timeout: 3000,
+    });
+    emit("productAdded");
+    // Fetch the updated product list after the insert to reflect the new product
+    const { data: updatedProducts, error: fetchUpdatedError } = await supabase
+      .from("products")
+      .select(); // Get all products again
 
+    if (fetchUpdatedError) {
+      console.error("Error fetching updated product list:", fetchUpdatedError);
+      toast.add({
+        title: "Error",
+        description: "An error occurred while updating the product list.",
+        timeout: 3000,
+      });
+      return;
+    }
+
+    // Update local state with the new product list
+    productlist.value = updatedProducts ?? [];
+  } catch (err: any) {
+    console.error("Error adding product:", err);
+    toast.add({
+      title: "Error",
+      description: "An error occurred while adding the product.",
       timeout: 3000,
     });
   }
 };
-// Fetch Existing Shopping List Items
-const { data, error } = await useAsyncData("products", async () => {
-  const { data, error } = await supabase.from("products").select(); // Fetch all items
-  if (error) throw new Error(error.message);
-  return data;
-});
-
-productlist.value = data.value ?? [];
 </script>
 
 <style scoped>

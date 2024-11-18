@@ -14,7 +14,6 @@
             label="Ekle"
             @click="isOpen = true"
           />
-
           <USlideover v-model="isOpen" prevent-close>
             <UCard
               class="flex flex-col flex-1"
@@ -40,20 +39,21 @@
                   />
                 </div>
               </template>
-              <div @click="toast.add({ title: 'Alışveriş Listesine Eklendi' })">
+              <div>
                 <ProductList
                   v-for="product in products"
                   :key="product.id"
                   :products="product"
+                  @productDeleted="refreshProducts"
                 />
               </div>
-              <!--  <Placeholder class="h-full" /> -->
             </UCard>
           </USlideover>
         </div>
       </template>
       <template #ProductsInput>
-        <ProductsInput />
+        <!-- ProductAdded olayını yakalıyoruz -->
+        <ProductsInput @productAdded="refreshProducts" />
       </template>
     </UTabs>
   </div>
@@ -70,37 +70,41 @@ const shopLists = ref<ShoppingList[]>([]);
 const supabaseProduct = useSupabaseClient<Products>();
 const supabaseList = useSupabaseClient<ShoppingList>();
 
-/* fetch Products Table from Supabase */
-const { data: productsData, error: productsError } = await useAsyncData(
-  "products",
-  async () => {
-    const { data, error } = await supabaseProduct
-      .from("products") // Fetch products
-      .select(); // Adjust fields as needed
-    if (error) throw new Error(error.message);
-    return data;
+const toast = useToast();
+
+// Fetch Products
+const fetchProducts = async () => {
+  try {
+    const { data, error } = await supabaseProduct.from("products").select();
+    if (error) throw error;
+
+    products.value = data ?? [];
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    toast.add({ title: "Failed to fetch products." });
   }
-);
+};
 
-// Assign productsData to products reactive variable
-products.value = productsData?.value ?? [];
-/* Fetch Products */
+// Refresh Products (Ürünleri yeniden getir)
+const refreshProducts = async () => {
+  await fetchProducts();
+};
 
-/* fetch shoppingList Table from Supabase */
-const { data: shopListsData, error: shopListsError } = await useAsyncData(
-  "shoppingList",
-  async () => {
-    const { data, error } = await supabaseProduct
-      .from("shoppingList") // Fetch products
-      .select(); // Adjust fields as needed
-    if (error) throw new Error(error.message);
-    return data;
+// Fetch Shopping List
+const fetchShoppingList = async () => {
+  try {
+    const { data, error } = await supabaseList.from("shoppingList").select();
+    if (error) throw error;
+
+    shopLists.value = data ?? [];
+  } catch (error) {
+    console.error("Error fetching shopping list:", error);
+    toast.add({ title: "Failed to fetch shopping list." });
   }
-);
+};
 
-// Assign productsData to products reactive variable
-shopLists.value = shopListsData?.value ?? [];
-/* Fetch shoppingList */
+await fetchProducts();
+await fetchShoppingList();
 
 const items = [
   {
@@ -114,6 +118,4 @@ const items = [
     slot: "ProductsInput",
   },
 ];
-
-const toast = useToast();
 </script>
