@@ -45,6 +45,7 @@
                   :key="product.id"
                   :products="product"
                   @productDeleted="refreshProducts"
+                  @addedToShoppingList="refreshShoppingList"
                 />
               </div>
             </UCard>
@@ -86,6 +87,10 @@ const fetchProducts = async () => {
 };
 
 // Refresh Products (Ürünleri yeniden getir)
+
+const refreshShoppingList = async () => {
+  await fetchShoppingList();
+};
 const refreshProducts = async () => {
   await fetchProducts();
 };
