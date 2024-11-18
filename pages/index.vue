@@ -2,7 +2,11 @@
   <div class="p-4">
     <UTabs :items="items" :default-index="0">
       <template #ShoppingList>
-        <ShoppingList />
+        <ShoppingList
+          v-for="shopList in shopLists"
+          :key="shopList.id"
+          :shopLists="shopList"
+        />
         <div>
           <UButton
             class="bg-green-400 text-gray-600"
@@ -58,20 +62,45 @@
 <script setup lang="ts">
 const isOpen = ref(false);
 
-import type { Products } from "~/types/types";
+import type { Products, ShoppingList } from "~/types/types";
+
 const products = ref<Products[]>([]);
+const shopLists = ref<ShoppingList[]>([]);
 
-const supabase = useSupabaseClient<Products>();
+const supabaseProduct = useSupabaseClient<Products>();
+const supabaseList = useSupabaseClient<ShoppingList>();
 
-const { data, error } = await useAsyncData("products", async () => {
-  const { data, error } = await supabase
-    .from("products") // Replace with your table name
-    .select(); // Adjust fields as needed
-  if (error) throw new Error(error.message);
-  return data;
-});
+/* fetch Products Table from Supabase */
+const { data: productsData, error: productsError } = await useAsyncData(
+  "products",
+  async () => {
+    const { data, error } = await supabaseProduct
+      .from("products") // Fetch products
+      .select(); // Adjust fields as needed
+    if (error) throw new Error(error.message);
+    return data;
+  }
+);
 
-products.value = data.value ?? [];
+// Assign productsData to products reactive variable
+products.value = productsData?.value ?? [];
+/* Fetch Products */
+
+/* fetch shoppingList Table from Supabase */
+const { data: shopListsData, error: shopListsError } = await useAsyncData(
+  "shoppingList",
+  async () => {
+    const { data, error } = await supabaseProduct
+      .from("shoppingList") // Fetch products
+      .select(); // Adjust fields as needed
+    if (error) throw new Error(error.message);
+    return data;
+  }
+);
+
+// Assign productsData to products reactive variable
+shopLists.value = shopListsData?.value ?? [];
+/* Fetch shoppingList */
 
 const items = [
   {
