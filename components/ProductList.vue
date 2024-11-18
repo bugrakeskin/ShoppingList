@@ -1,46 +1,48 @@
 <template>
-  <div></div>
-
-  <div class="my-4">
-    <div>
-      <div
-        class="md:hover:bg-green-900 p-2 cursor-pointer border-b border-gray-100 dark:border-gray-800"
-      >
-        <div class="flex space-x-3 items-center justify-between">
-          <div
-            @click="toast.add({ title: 'Alışveriş Listesine Eklendi' })"
-            class="text-xl"
-          >
-            <span>
-              {{ props.products.name }}
-            </span>
-          </div>
-          <div class="flex space-x-2">
-            <UBadge
-              @click="toast.add({ title: 'Alışveriş Listesine Eklendi' })"
-              color="white"
-              variant="solid"
-            >
-              <UIcon class="text-2xl text-green-400" :name="iconType" />
-            </UBadge>
-
-            <UBadge color="white" variant="solid">
-              <UIcon
-                @click="deleteProduct"
-                class="text-2xl text-green-400"
-                name="i-heroicons-trash"
-              />
-            </UBadge>
-          </div>
+  <div>
+    <!-- Compenant DIV -->
+    <div
+      class="border-b border-gray-100 dark:border-gray-800 my-4 flex p-2 items-center text-xl justify-between md:hover:bg-gray-800"
+    >
+      <!-- LEFT DIV -->
+      <div class="flex space-x-2">
+        <div>
+          <UIcon
+            class="text-gray-500"
+            dark:text-green-400
+            :name="iconType"
+          ></UIcon>
         </div>
+        <div class="text-gray-800 dark:text-gray-400 leading-6 font-sans">
+          {{ props.products.name }}
+        </div>
+      </div>
+      <!-- RIGHT DIV -->
+      <div class="flex space-x-4">
+        <UButton
+          @click="addToShoppingList"
+          icon="carbon:shopping-cart-plus"
+          size="sm"
+          color="primary"
+          square
+          variant="solid"
+        />
+        <UButton
+          @click="deleteProduct"
+          icon="i-heroicons-trash"
+          size="sm"
+          color="primary"
+          square
+          variant="solid"
+        />
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-const toast = useToast();
 import type { Products } from "~/types/types";
+const toast = useToast();
 const selected = ref(false);
 const props = defineProps({
   products: {
@@ -74,7 +76,7 @@ const fetchProducts = async () => {
     toast.add({ title: "Failed to load products." });
   }
 };
-const emit = defineEmits(["productDeleted"]);
+const emit = defineEmits(["productDeleted", "addedToShoppingList"]);
 
 const deleteProduct = async () => {
   try {
@@ -91,6 +93,22 @@ const deleteProduct = async () => {
   } catch (error: any) {
     console.error("Error deleting product:", error);
     toast.add({ title: "Failed to delete product." });
+  }
+};
+
+const addToShoppingList = async () => {
+  try {
+    const { error } = await supabase
+      .from("shoppingList")
+      .insert({ product_id: props.products.id });
+
+    if (error) throw error;
+
+    toast.add({ title: "Ürün Başarıyla Alışveriş Listesine Eklendi." });
+    emit("addedToShoppingList");
+  } catch (error: any) {
+    console.error("Error adding product:", error);
+    toast.add({ title: "Failed to adding product." });
   }
 };
 </script>
