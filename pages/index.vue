@@ -10,7 +10,7 @@
             v-if="shopLists.length === 0"
             class="text-gray-500 dark:text-gray-400 p-4"
           >
-            <p class="text-xl">Alış veriş listeniz boş.</p>
+            <p class="text-xl">Alışveriş listeniz boş.</p>
           </div>
           <ShoppingList
             v-for="shopList in shopLists"
