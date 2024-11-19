@@ -42,8 +42,6 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed } from "vue";
-
 import type { Products, ShoppingList } from "~/types/types";
 
 // Props

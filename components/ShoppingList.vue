@@ -13,7 +13,7 @@
           dark:text-green-400
           :name="iconType"
         ></UIcon>
-        <div class="text-gray-800 dark:text-gray-400 leading-6 font-sans">
+        <div class="text-gray-600 dark:text-gray-200 leading-6 font-sans">
           {{ props.shopLists.name }}
         </div>
       </div>

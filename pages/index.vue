@@ -59,11 +59,28 @@
       </template>
     </UTabs>
   </div>
+  <!-- History Componenet -->
+  <div class="mt-8">
+    <h1 class="text-2xl text-green-600 dark:text-green-300">
+      Alışveriş Geçmişi
+    </h1>
+    <HistoryOfShoppingList
+      v-for="history in historyLists"
+      :key="history.id"
+      :HistoryOfShoppingListItems="history"
+      @productDeleted="refreshHistoryList"
+      @addedToShoppingList="refreshHistoryList"
+    />
+  </div>
 </template>
 
 <script setup lang="ts">
 import { defineAsyncComponent, ref, watch } from "vue";
-import type { ShoppingList, Products } from "~~/types/types"; // Add the correct types
+import type {
+  ShoppingList,
+  Products,
+  HistoryOfShoppingListInt,
+} from "~~/types/types"; // Add the correct types
 
 // Lazy-loaded components
 const ShoppingList = defineAsyncComponent(
@@ -81,6 +98,7 @@ const isOpen = ref(false);
 const activeTab = ref("ShoppingList");
 const products = ref<Products[]>([]); // Explicitly typing products array
 const shopLists = ref<ShoppingList[]>([]); // Explicitly typing shopLists array
+const historyLists = ref<HistoryOfShoppingListInt[]>([]); // Explicitly typing shopLists array
 
 // Supabase and toast instances
 const supabase = useSupabaseClient();
@@ -106,6 +124,9 @@ const refreshProducts = async () => {
 const refreshShoppingList = async () => {
   await fetchData("shoppingList", shopLists);
 };
+const refreshHistoryList = async () => {
+  await fetchData("history", historyLists);
+};
 
 // Watch active tab
 watch(activeTab, async () => {
@@ -113,12 +134,15 @@ watch(activeTab, async () => {
     await refreshShoppingList();
   } else if (activeTab.value === "ProductsInput") {
     await refreshProducts();
+  } else if (activeTab.value === "History") {
+    await refreshHistoryList();
   }
 });
 
 // Initial data fetch
 await refreshProducts();
 await refreshShoppingList();
+await refreshHistoryList();
 
 // Tabs definition
 const items = [
