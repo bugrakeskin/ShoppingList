@@ -1,9 +1,11 @@
 <template>
   <!-- component main div -->
 
-  <div class="max-h-[10vh] overflow-y-auto">
+  <div
+    class="max-h-[10vh] overflow-y-auto border-b border-gray-100 dark:border-gray-800"
+  >
     <div
-      class="flex p-2 space-x-2 justify-between mt-4 text-gray-600 dark:text-gray-200"
+      class="flex p-2 space-x-2 justify-between mt-2 text-gray-600 dark:text-gray-200"
     >
       <div>{{ props.HistoryOfShoppingListItems.name }}</div>
       <div>{{ props.HistoryOfShoppingListItems.type }}</div>

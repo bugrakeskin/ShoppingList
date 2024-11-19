@@ -2,8 +2,8 @@
   <div class="">
     <UTabs :items="items" :default-index="0">
       <template #ShoppingList>
-        <div class="pt-4">
-          <h1 class="text-2xl text-green-600 dark:text-green-300">
+        <div>
+          <h1 class="text-2xl text-green-600 dark:text-green-300 p-4">
             Alışveriş Listesi
           </h1>
 
@@ -53,8 +53,8 @@
         </div>
 
         <!-- History Componenet -->
-        <div class="mt-8">
-          <h1 class="text-2xl text-green-600 dark:text-green-300">
+        <div class="mt-4">
+          <h1 class="text-2xl p-4 text-green-600 dark:text-green-300">
             Alışveriş Geçmişi
           </h1>
           <HistoryOfShoppingList

@@ -2,7 +2,7 @@
   <!-- Compenant DIV -->
 
   <div
-    class="border-b border-gray-100 dark:border-gray-800 my-4 flex p-2 items-center text-xl justify-between md:hover:bg-gray-800"
+    class="border-b border-gray-100 dark:border-gray-800 p-2 flex items-center text-xl justify-between md:hover:bg-gray-800"
   >
     <!-- LEFT DIV -->
     <div class="flex space-x-2 items-center">
