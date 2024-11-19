@@ -1,6 +1,5 @@
 <template>
   <!-- Compenant DIV -->
-
   <div
     @click="toggleCompleted"
     :class="completed ? 'line-through text-black dark:text-white' : ''"
@@ -22,9 +21,9 @@
     </div>
     <!-- RIGTH DIV -->
     <div class="flex items-center px-4 space-x-1">
-      <span class="text-gray-400 text-sm dark:text-gray-500"
-        >{{ whenAdded }}
-      </span>
+      <span class="text-gray-400 text-sm dark:text-gray-500">{{
+        whenAdded
+      }}</span>
     </div>
   </div>
 </template>
@@ -32,8 +31,9 @@
 <script lang="ts" setup>
 const selected = ref(false);
 const completed = ref(false);
+const supabase = useSupabaseClient<HistoryOfShoppingListInt>();
 
-import type { ShoppingList } from "~/types/types";
+import type { HistoryOfShoppingListInt, ShoppingList } from "~/types/types";
 
 const props = defineProps({
   shopLists: {
@@ -41,6 +41,7 @@ const props = defineProps({
     required: true,
   },
 });
+
 const iconType = computed(() => {
   if (props.shopLists.type === "Yiyecek") {
     return "hugeicons:vegetarian-food";
@@ -50,9 +51,9 @@ const iconType = computed(() => {
     return "i-heroicons-arrow-down-tray";
   }
 });
+
 const whenAdded = computed(() => {
   const today = new Date();
-  // Bugünün sadece yıl, ay, gün değerlerini alın
   const todayDate = new Date(
     today.getFullYear(),
     today.getMonth(),
@@ -65,26 +66,39 @@ const whenAdded = computed(() => {
     new Date(props.shopLists.created_at).getDate()
   );
 
-  // Tarihler aynı gün mü kontrol et
   if (todayDate.getTime() === createdDate.getTime()) {
     return "Bugün";
   }
 
-  // Gün farkını hesapla
   const diffTime = todayDate.getTime() - createdDate.getTime();
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); // ceil ile yukarı yuvarla
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
   return diffDays + " gün önce";
 });
-const isStruckThrough = ref(false);
+
 const toast = useToast();
-const toggleCompleted = () => {
+const emit = defineEmits(["addedToHistory"]);
+const toggleCompleted = async () => {
   completed.value = !completed.value;
   selected.value = completed.value; // Sync checkbox with completed state
+
   if (completed.value) {
+    await saveToHistory();
     toast.add({ title: "Ürün Satın Alındı." });
+    emit("addedToHistory"); // Emit event here
   }
 };
+
+async function saveToHistory() {
+  const { error } = await supabase.from("history").insert({
+    name: props.shopLists.name,
+    type: props.shopLists.type,
+    created_at: new Date().toISOString(),
+  });
+  if (error) {
+    console.error("Error:", error.message);
+  }
+}
 </script>
 
 <style></style>

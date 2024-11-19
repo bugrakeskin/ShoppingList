@@ -11,9 +11,10 @@
             v-for="shopList in shopLists"
             :key="shopList.id"
             :shopLists="shopList"
+            @addedToHistory="refreshHistoryList"
           />
         </div>
-        <div class="mt-8">
+        <div class="mt-8 p-2">
           <UButton
             class="bg-green-400 text-gray-600"
             block
@@ -61,8 +62,7 @@
             v-for="history in historyLists"
             :key="history.id"
             :HistoryOfShoppingListItems="history"
-            @productDeleted="refreshHistoryList"
-            @addedToShoppingList="refreshHistoryList"
+            @addedtoHistory="refreshHistoryList"
           />
         </div>
       </template>
@@ -135,8 +135,6 @@ watch(activeTab, async () => {
     await refreshShoppingList();
   } else if (activeTab.value === "ProductsInput") {
     await refreshProducts();
-  } else if (activeTab.value === "History") {
-    await refreshHistoryList();
   }
 });
 

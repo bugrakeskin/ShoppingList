@@ -2,14 +2,16 @@
   <!-- component main div -->
 
   <div
-    class="max-h-[10vh] overflow-y-auto border-b border-gray-100 dark:border-gray-800"
+    class="container mx-auto max-h-[15vh] overflow-y-auto border-b border-gray-100 dark:border-gray-800"
   >
     <div
-      class="flex p-2 space-x-2 justify-between mt-2 text-gray-600 dark:text-gray-200"
+      class="flex p-1 px-4 space-x-2 justify-between mt-2 text-gray-600 dark:text-gray-200"
     >
       <div>{{ props.HistoryOfShoppingListItems.name }}</div>
-      <div>{{ props.HistoryOfShoppingListItems.type }}</div>
-      <div>{{ whenAdded }}</div>
+      <!--  <div>{{ props.HistoryOfShoppingListItems.type }}</div> -->
+      <div class="text-gray-400 text-sm dark:text-gray-500">
+        {{ whenAdded }}
+      </div>
     </div>
   </div>
   <!-- component main div -->
