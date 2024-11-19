@@ -49,20 +49,27 @@ const iconType = computed(() => {
 });
 const whenAdded = computed(() => {
   const today = new Date();
-  const date = new Date(props.shopLists.created_at);
+  // Bugünün sadece yıl, ay, gün değerlerini alın
+  const todayDate = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate()
+  );
+
+  const createdDate = new Date(
+    new Date(props.shopLists.created_at).getFullYear(),
+    new Date(props.shopLists.created_at).getMonth(),
+    new Date(props.shopLists.created_at).getDate()
+  );
 
   // Tarihler aynı gün mü kontrol et
-  if (
-    today.getFullYear() === date.getFullYear() &&
-    today.getMonth() === date.getMonth() &&
-    today.getDate() === date.getDate()
-  ) {
+  if (todayDate.getTime() === createdDate.getTime()) {
     return "Bugün";
   }
 
   // Gün farkını hesapla
-  const diffTime = Math.abs(today.getTime() - date.getTime());
-  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)); // floor kullanarak tam gün farkı hesapla
+  const diffTime = todayDate.getTime() - createdDate.getTime();
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); // ceil ile yukarı yuvarla
 
   return diffDays + " gün önce";
 });

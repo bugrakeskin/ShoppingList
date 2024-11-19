@@ -39,7 +39,7 @@
                   />
                 </div>
               </template>
-              <div>
+              <div class="max-h-[80vh] overflow-y-auto">
                 <ProductList
                   v-for="product in products"
                   :key="product.id"
