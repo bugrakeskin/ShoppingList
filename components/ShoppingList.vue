@@ -2,7 +2,9 @@
   <!-- Compenant DIV -->
 
   <div
-    class="border-b border-gray-100 dark:border-gray-800 p-2 flex items-center text-xl justify-between md:hover:bg-gray-800"
+    @click="toggleCompleted"
+    :class="completed ? 'line-through text-black dark:text-white' : ''"
+    class="border-b border-gray-100 dark:border-gray-800 p-2 flex items-center text-xl justify-between md:hover:bg-gray-800 cursor-pointer"
   >
     <!-- LEFT DIV -->
     <div class="flex space-x-2 items-center">
@@ -29,6 +31,7 @@
 
 <script lang="ts" setup>
 const selected = ref(false);
+const completed = ref(false);
 
 import type { ShoppingList } from "~/types/types";
 
@@ -73,6 +76,12 @@ const whenAdded = computed(() => {
 
   return diffDays + " gün önce";
 });
+const isStruckThrough = ref(false);
+const toast = useToast();
+const toggleCompleted = () => {
+  completed.value = !completed.value;
+  selected.value = completed.value; // Sync checkbox with completed state
+};
 </script>
 
 <style></style>
