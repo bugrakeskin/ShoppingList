@@ -92,13 +92,35 @@ const toggleCompleted = async () => {
 };
 
 async function saveToHistory() {
-  const { error } = await supabase.from("history").insert({
-    name: props.shopLists.name,
-    type: props.shopLists.type,
-    created_at: new Date().toISOString(),
-  });
-  if (error) {
-    console.error("Error:", error.message);
+  // First, check if the item already exists in history
+  const { data, error: selectError } = await supabase
+    .from("history")
+    .select("id")
+    .eq("name", props.shopLists.name)
+    .single();
+
+  if (selectError && selectError.code !== "PGRST116") {
+    // Ignore if no rows found
+    console.error("Error checking history:", selectError.message);
+    return;
+  }
+
+  if (data) {
+    // If record exists, do nothing or update it (optional)
+    console.log("Record already exists, updating...");
+  } else {
+    // If no record found, perform an insert
+    const { error: insertError } = await supabase.from("history").insert({
+      name: props.shopLists.name,
+      type: props.shopLists.type,
+      created_at: new Date().toISOString(),
+    });
+
+    if (insertError) {
+      console.error("Error inserting into history:", insertError.message);
+    } else {
+      console.log("Insert successful");
+    }
   }
 }
 
