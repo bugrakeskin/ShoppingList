@@ -77,13 +77,15 @@ const whenAdded = computed(() => {
 });
 
 const toast = useToast();
-const emit = defineEmits(["addedToHistory"]);
+const emit = defineEmits(["addedToHistory", "addedtoShoppingList"]);
+
 const toggleCompleted = async () => {
   completed.value = !completed.value;
   selected.value = completed.value; // Sync checkbox with completed state
 
   if (completed.value) {
     await saveToHistory();
+    await deleteFromShoppingList(); // Add the deletion after saving to history
     toast.add({ title: "Ürün Satın Alındı." });
     emit("addedToHistory"); // Emit event here
   }
@@ -98,6 +100,17 @@ async function saveToHistory() {
   if (error) {
     console.error("Error:", error.message);
   }
+}
+
+async function deleteFromShoppingList() {
+  const { error } = await supabase
+    .from("shoppingList")
+    .delete()
+    .eq("id", props.shopLists.id); // Delete the item based on its ID
+  if (error) {
+    console.error("Error deleting from shoppingList:", error.message);
+  }
+  emit("addedtoShoppingList");
 }
 </script>
 

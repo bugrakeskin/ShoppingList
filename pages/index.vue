@@ -6,12 +6,18 @@
           <h1 class="text-2xl text-green-600 dark:text-green-300 p-4">
             Alışveriş Listesi
           </h1>
-
+          <div
+            v-if="shopLists.length === 0"
+            class="text-gray-500 dark:text-gray-400 p-4"
+          >
+            <p class="text-xl">Alış veriş listeniz boş.</p>
+          </div>
           <ShoppingList
             v-for="shopList in shopLists"
             :key="shopList.id"
             :shopLists="shopList"
             @addedToHistory="refreshHistoryList"
+            @addedtoShoppingList="refreshShoppingList"
           />
         </div>
         <div class="mt-8 p-2">
