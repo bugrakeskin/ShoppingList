@@ -81,6 +81,9 @@ const toast = useToast();
 const toggleCompleted = () => {
   completed.value = !completed.value;
   selected.value = completed.value; // Sync checkbox with completed state
+  if (completed.value) {
+    toast.add({ title: "Ürün Satın Alındı." });
+  }
 };
 </script>
 
