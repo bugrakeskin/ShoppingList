@@ -2,7 +2,7 @@
   <div>
     <!-- Component Container -->
     <div
-      class="border-b border-gray-100 dark:border-gray-800 my-4 flex p-2 items-center text-xl justify-between md:hover:bg-gray-800"
+      class="border-b border-gray-100 dark:border-gray-800 my-4 flex p-2 items-center text-xl justify-between md:hover:bg-gray-300 md:dark:hover:bg-gray-800"
     >
       <!-- LEFT DIV -->
       <div class="flex space-x-2">
@@ -21,7 +21,7 @@
         <!-- Add to Shopping List Button -->
         <UButton
           @click="addToShoppingList"
-          icon="carbon:shopping-cart-plus"
+          :icon="buttonIcon"
           size="sm"
           color="primary"
           square
@@ -43,6 +43,8 @@
 
 <script lang="ts" setup>
 import type { Products, ShoppingList } from "~/types/types";
+
+const buttonIcon = ref("carbon:shopping-cart-plus"); // Initial icon for the button
 
 // Props
 const props = defineProps({
@@ -86,7 +88,6 @@ const deleteProduct = async () => {
     emit("productDeleted");
   } catch (error) {
     console.error("Error deleting product:", error);
-
     toast.add({ title: "Ürün silinirken hata oluştu." });
   }
 };
@@ -120,9 +121,19 @@ const addToShoppingList = async () => {
       created_at: new Date().toISOString(),
     });
 
+    // Change the icon to "check" when clicked
+    buttonIcon.value = "i-heroicons-check-circle";
+    // After a short delay, revert to the original icon
+    setTimeout(() => {
+      buttonIcon.value = "carbon:shopping-cart-plus";
+    }, 2000); // Change back after 2 seconds (2000 ms)
+
     if (insertError) throw insertError;
 
-    toast.add({ title: "Ürün Başarıyla Alışveriş Listesine Eklendi." });
+    toast.add({
+      description: "Ürün alışveriş listesine eklendi.",
+      timeout: 1000,
+    });
     emit("addedToShoppingList"); // Parent bileşene bildir
   } catch (error) {
     console.error("Error adding product to shopping list:", error);

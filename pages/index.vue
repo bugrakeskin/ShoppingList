@@ -60,7 +60,7 @@
         </div>
 
         <!-- History Componenet -->
-        <div class="mt-4 max-h-[45vh] overflow-y-auto">
+        <!--    <div class="mt-4 max-h-[45vh] overflow-y-auto">
           <h1 class="text-2xl p-4 text-green-600 dark:text-green-300">
             Alışveriş Geçmişi
           </h1>
@@ -70,7 +70,7 @@
             :HistoryOfShoppingListItems="history"
             @addedtoHistory="refreshHistoryList"
           />
-        </div>
+        </div> -->
       </template>
 
       <!-- Ürünler -->
