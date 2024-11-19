@@ -1,8 +1,10 @@
 <template>
   <!-- component main div -->
 
-  <div>
-    <div class="flex space-x-2 justify-between mt-4">
+  <div class="max-h-[10vh] overflow-y-auto">
+    <div
+      class="flex p-2 space-x-2 justify-between mt-4 text-gray-600 dark:text-gray-200"
+    >
       <div>{{ props.HistoryOfShoppingListItems.name }}</div>
       <div>{{ props.HistoryOfShoppingListItems.type }}</div>
       <div>{{ whenAdded }}</div>

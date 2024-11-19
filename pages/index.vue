@@ -51,6 +51,20 @@
             </UCard>
           </USlideover>
         </div>
+
+        <!-- History Componenet -->
+        <div class="mt-8">
+          <h1 class="text-2xl text-green-600 dark:text-green-300">
+            Alışveriş Geçmişi
+          </h1>
+          <HistoryOfShoppingList
+            v-for="history in historyLists"
+            :key="history.id"
+            :HistoryOfShoppingListItems="history"
+            @productDeleted="refreshHistoryList"
+            @addedToShoppingList="refreshHistoryList"
+          />
+        </div>
       </template>
 
       <!-- Ürünler -->
@@ -58,19 +72,6 @@
         <ProductsInput @productAdded="refreshProducts" />
       </template>
     </UTabs>
-  </div>
-  <!-- History Componenet -->
-  <div class="mt-8">
-    <h1 class="text-2xl text-green-600 dark:text-green-300">
-      Alışveriş Geçmişi
-    </h1>
-    <HistoryOfShoppingList
-      v-for="history in historyLists"
-      :key="history.id"
-      :HistoryOfShoppingListItems="history"
-      @productDeleted="refreshHistoryList"
-      @addedToShoppingList="refreshHistoryList"
-    />
   </div>
 </template>
 

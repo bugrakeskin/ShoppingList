@@ -16,7 +16,7 @@
         />
       </UFormGroup>
 
-      <UButton type="submit"> Kaydet </UButton>
+      <UButton block type="submit"> Kaydet </UButton>
     </UForm>
     <!-- Success Message -->
   </div>
