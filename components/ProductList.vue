@@ -32,7 +32,7 @@
           @click="deleteProduct"
           icon="i-heroicons-trash"
           size="sm"
-          color="primary"
+          color="red"
           square
           variant="solid"
         />
@@ -66,9 +66,11 @@ const supabase = useSupabaseClient<ShoppingList>();
 // Icon Type Computation
 const iconType = computed(() => {
   if (props.products.type === "Yiyecek") {
-    return "hugeicons:vegetarian-food";
+    return "fluent:food-48-regular";
   } else if (props.products.type === "Temizlik") {
     return "carbon:clean";
+  } else if (props.products.type === "Kişisel Bakım") {
+    return "covid:personal-hygiene-hand-soap-1";
   } else {
     return "i-heroicons-arrow-down-tray";
   }

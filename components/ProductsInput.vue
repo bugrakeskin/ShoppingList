@@ -12,7 +12,7 @@
       <UFormGroup label="Ürün Tipi" name="type">
         <USelectMenu
           v-model="formData.type"
-          :options="['Yiyecek', 'Temizlik']"
+          :options="['Yiyecek', 'Temizlik', 'Kişisel Bakım']"
         />
       </UFormGroup>
 

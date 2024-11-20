@@ -44,9 +44,11 @@ const props = defineProps({
 
 const iconType = computed(() => {
   if (props.shopLists.type === "Yiyecek") {
-    return "hugeicons:vegetarian-food";
+    return "fluent:food-48-regular";
   } else if (props.shopLists.type === "Temizlik") {
     return "carbon:clean";
+  } else if (props.shopLists.type === "Kişisel Bakım") {
+    return "covid:personal-hygiene-hand-soap-1";
   } else {
     return "i-heroicons-arrow-down-tray";
   }
