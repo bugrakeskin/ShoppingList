@@ -119,7 +119,7 @@ const fetchData = async (table: string, targetRef: any) => {
     targetRef.value = data ?? [];
   } catch (err) {
     console.error(`Error fetching ${table}:`, err);
-    toast.add({ title: `Failed to fetch ${table}` });
+    toast.add({ title: `Failed to fetch ${table}`, color: "red" });
   }
 };
 

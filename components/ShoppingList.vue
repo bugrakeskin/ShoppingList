@@ -86,7 +86,10 @@ const toggleCompleted = async () => {
   if (completed.value) {
     await saveToHistory();
     await deleteFromShoppingList(); // Add the deletion after saving to history
-    toast.add({ title: "Ürün Satın Alındı." });
+    toast.add({
+      title: "Ürün Satın Alındı.",
+      description: "Alışveriş listesinden silindi.",
+    });
     emit("addedToHistory"); // Emit event here
   }
 };

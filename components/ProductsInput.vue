@@ -38,6 +38,35 @@ const supabase = useSupabaseClient<Products>();
 // "Ürün Eklendi" olayını yakalamak için emit tanımlandı
 const emit = defineEmits(["productAdded"]);
 
+// Yardımcı Fonksiyon: Her kelimenin baş harfini büyüt (Türkçe desteği ile)
+const capitalizeWords = (str: string): string => {
+  const turkishCharMap: Record<string, string> = {
+    ı: "I",
+    i: "İ",
+    ş: "Ş",
+    ç: "Ç",
+    ü: "Ü",
+    ö: "Ö",
+    ğ: "Ğ",
+  };
+
+  return str
+    .split(" ")
+    .map((word) => {
+      const firstChar = word[0]?.toLocaleUpperCase("tr") || "";
+      const rest = word.slice(1).toLocaleLowerCase("tr");
+
+      // Türkçe özel harfleri kontrol et ve dönüştür
+      const correctedFirstChar =
+        firstChar.toLocaleLowerCase("tr") in turkishCharMap
+          ? turkishCharMap[firstChar.toLocaleLowerCase("tr")]
+          : firstChar;
+
+      return correctedFirstChar + rest;
+    })
+    .join(" ");
+};
+
 // Ürün ekleme işlemi
 const addShoppingItem = async () => {
   try {
@@ -46,11 +75,13 @@ const addShoppingItem = async () => {
       toast.add({
         title: "Eksik Alan",
         description: "Lütfen tüm alanları doldurun.",
-        icon: "i-heroicons-exclamation-circle",
-        timeout: 3000,
+        color: "red",
       });
       return;
     }
+
+    // Ürünün adını düzenle
+    formData.value.name = capitalizeWords(formData.value.name);
 
     // Ürünün zaten var olup olmadığını manuel kontrol et
     const { data: existingProduct, error: fetchError } = await supabase
@@ -68,7 +99,7 @@ const addShoppingItem = async () => {
       toast.add({
         title: "Ürün Zaten Mevcut",
         description: `"${formData.value.name}" daha önce eklenmiş.`,
-        timeout: 3000,
+        color: "yellow",
       });
       return;
     }
@@ -93,7 +124,6 @@ const addShoppingItem = async () => {
     toast.add({
       title: "Ürün Eklendi",
       description: "Ürün başarıyla listeye eklendi!",
-      timeout: 3000,
     });
 
     // Ürün eklendi olayını gönder
@@ -103,7 +133,7 @@ const addShoppingItem = async () => {
     toast.add({
       title: "Hata",
       description: "Ürün eklenirken bir hata oluştu: " + err.message,
-      timeout: 3000,
+      color: "red",
     });
   }
 };

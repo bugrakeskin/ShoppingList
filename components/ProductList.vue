@@ -84,11 +84,18 @@ const deleteProduct = async () => {
 
     if (error) throw error;
 
-    toast.add({ title: "Ürün Başarıyla Silindi." });
+    toast.add({
+      title: "Silme Başaralı",
+      description: "Ürün listesinden silindi.",
+    });
     emit("productDeleted");
   } catch (error) {
     console.error("Error deleting product:", error);
-    toast.add({ title: "Ürün silinirken hata oluştu." });
+    toast.add({
+      title: "Ürün silinirken hata oluştu.",
+      description: "Tekrar deneyiniz.",
+      color: "red",
+    });
   }
 };
 
@@ -109,7 +116,11 @@ const addToShoppingList = async () => {
 
     if (data && data.length > 0) {
       // Eğer ürün zaten listeye eklenmişse
-      toast.add({ title: "Bu ürün zaten alışveriş listenizde." });
+      toast.add({
+        title: "Bu ürün zaten alışveriş listenizde.",
+        description: "Tekrar ekleyemezsiniz.",
+        color: "yellow",
+      });
       return; // Hiçbir işlem yapma, fonksiyondan çık
     }
 
@@ -126,18 +137,22 @@ const addToShoppingList = async () => {
     // After a short delay, revert to the original icon
     setTimeout(() => {
       buttonIcon.value = "carbon:shopping-cart-plus";
-    }, 2000); // Change back after 2 seconds (2000 ms)
+    }, 3000); // Change back after 2 seconds (2000 ms)
 
     if (insertError) throw insertError;
 
     toast.add({
       description: "Ürün alışveriş listesine eklendi.",
-      timeout: 1000,
+      timeout: 2000,
     });
     emit("addedToShoppingList"); // Parent bileşene bildir
   } catch (error) {
     console.error("Error adding product to shopping list:", error);
-    toast.add({ title: "Ürün listeye eklenirken hata oluştu." });
+    toast.add({
+      title: "Ürün listeye eklenirken hata oluştu.",
+      description: "Lütfen tekrar deneyiniz.",
+      color: "red",
+    });
   }
 };
 </script>
