@@ -6,6 +6,11 @@ export default defineNuxtConfig({
   supabase: {
     redirect: false,
   },
+  runtimeConfig: {
+    public: {
+      baseurl: process.env.BASE_URL ?? "http://localhost:3000",
+    },
+  },
   ui: {
     notifications: {
       position: "top-right", // Default position
