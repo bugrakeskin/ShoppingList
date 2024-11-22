@@ -1,33 +1,29 @@
-import type { ShoppingList } from "~~/types/types";
-export function useWhenAddedCalculate(items: ShoppingList[]) {
-  const processedItems = computed(() =>
-    items.map((item) => {
-      const today = new Date();
-      const todayDate = new Date(
-        today.getFullYear(),
-        today.getMonth(),
-        today.getDate()
-      );
+export function useWhenAddedCalculate(createdAt: string | Date) {
+  const calculateDate = computed(() => {
+    const today = new Date();
+    const todayDate = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      today.getDate()
+    );
 
-      const createdDate = new Date(
-        new Date(item.created_at).getFullYear(),
-        new Date(item.created_at).getMonth(),
-        new Date(item.created_at).getDate()
-      );
+    const createdDate = new Date(
+      new Date(createdAt).getFullYear(),
+      new Date(createdAt).getMonth(),
+      new Date(createdAt).getDate()
+    );
 
-      const whenAdded =
-        todayDate.getTime() === createdDate.getTime()
-          ? "Bugün"
-          : `${Math.ceil(
-              (todayDate.getTime() - createdDate.getTime()) /
-                (1000 * 60 * 60 * 24)
-            )} gün önce`;
+    if (todayDate.getTime() === createdDate.getTime()) {
+      return "Bugün";
+    }
 
-      return { ...item, whenAdded }; // ShoppingList yapısına "whenAdded" ekleniyor
-    })
-  );
+    const diffTime = todayDate.getTime() - createdDate.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    return `${diffDays} gün önce`;
+  });
 
   return {
-    processedItems,
+    calculateDate,
   };
 }

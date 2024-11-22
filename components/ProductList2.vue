@@ -19,7 +19,7 @@
             <UIcon
               class="text-gray-500"
               dark:text-green-400
-              :name="useIconType(product.type).value"
+              :name="getIconForType(product.type)"
             ></UIcon>
             <div class="text-gray-800 dark:text-gray-400 leading-6 font-sans">
               {{ product.name }}
@@ -54,9 +54,8 @@
 </template>
 
 <script setup lang="ts">
-scrollbars;
 import type { Products } from "~/types/types"; // Import Products and ShoppingList interfaces
-import { useIconType } from "~/composables/useIconType"; // Import the composable
+const { getIconForType } = useIcon();
 const emit = defineEmits(["productAdded"]);
 const buttonIcon = ref("carbon:shopping-cart-plus"); // Initial icon for the button
 

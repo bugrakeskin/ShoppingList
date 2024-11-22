@@ -7,7 +7,7 @@ export interface Products {
 
 export interface ShoppingList {
   id: number;
-  created_at: string;
+  created_at: string | Date;
   name: string;
   type: string;
   whenAdded: string;
