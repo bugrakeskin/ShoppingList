@@ -47,13 +47,7 @@
                 </div>
               </template>
               <div class="max-h-[80vh] overflow-y-auto">
-                <ProductList
-                  v-for="product in products"
-                  :key="product.id"
-                  :products="product"
-                  @productDeleted="refreshProducts"
-                  @addedToShoppingList="refreshShoppingList"
-                />
+                <ProductList2 />
               </div>
             </UCard>
           </USlideover>
@@ -165,5 +159,12 @@ const items = [
 </script>
 
 <style scoped>
-/* Add any custom styles here */
+::-webkit-scrollbar {
+  display: none;
+}
+
+body {
+  -ms-overflow-style: none; /* IE ve Edge */
+  scrollbar-width: none; /* Firefox */
+}
 </style>

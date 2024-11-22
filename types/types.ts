@@ -10,6 +10,7 @@ export interface ShoppingList {
   created_at: string;
   name: string;
   type: string;
+  whenAdded: string;
 }
 
 export interface HistoryOfShoppingListInt {
@@ -18,3 +19,36 @@ export interface HistoryOfShoppingListInt {
   name: string;
   type: string;
 }
+
+export type Database = {
+  public: {
+    Tables: {
+      your_table_name: {
+        Row: {
+          id: number;
+          name: string;
+          created_at: string;
+        };
+        Insert: {
+          name: string;
+        };
+        Update: {
+          name?: string;
+        };
+      };
+      products: {
+        Row: {
+          id: number;
+          name: string;
+          created_at: string;
+        };
+        Insert: {
+          name: string;
+        };
+        Update: {
+          name?: string;
+        };
+      };
+    };
+  };
+};
