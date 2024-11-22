@@ -3,7 +3,7 @@
   <div
     @click="toggleCompleted"
     :class="completed ? 'line-through text-black dark:text-white' : ''"
-    class="border-b border-gray-100 dark:border-gray-800 p-2 flex items-center text-xl justify-between md:hover:bg-gray-300 md:dark:hover:bg-gray-800 cursor-pointer"
+    class="border-b border-gray-100 dark:border-gray-800 p-2 flex items-center md:text-xl sm:text-sm text-pretty justify-between md:hover:bg-gray-300 md:dark:hover:bg-gray-800 cursor-pointer"
   >
     <!-- LEFT DIV -->
     <div class="flex space-x-2 items-center">
@@ -21,9 +21,9 @@
     </div>
     <!-- RIGTH DIV -->
     <div class="flex items-center px-4 space-x-1">
-      <span class="text-gray-400 text-sm dark:text-gray-500">{{
-        whenAdded
-      }}</span>
+      <span class="text-gray-400 text-sm dark:text-gray-500 text-nowrap">
+        {{ whenAdded }}</span
+      >
     </div>
   </div>
 </template>

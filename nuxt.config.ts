@@ -11,10 +11,5 @@ export default defineNuxtConfig({
       baseurl: process.env.BASE_URL ?? "http://localhost:3000",
     },
   },
-  ui: {
-    notifications: {
-      position: "top-right", // Default position
-      duration: 5000, // Notification duration in milliseconds
-    },
-  },
+  ui: {},
 });
